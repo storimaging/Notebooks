@@ -2,11 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.linalg as spl
 import scipy.stats as sps
-%matplotlib inline
-
 import ot                 
 import ot.plot
-
 from ipywidgets import interact, interactive, fixed, interact_manual
 
 
