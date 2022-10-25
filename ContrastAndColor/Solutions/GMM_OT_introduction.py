@@ -109,12 +109,12 @@ def GaussianBarycenterW2(mu,Sigma,alpha,N):
 
 
 ###############################
-###### GW2 between GMM
+###### M2 between GMM
 ###############################
 
 
-def GW2(pi0,pi1,mu0,mu1,S0,S1):
-    # return the GW2 discrete map and the GW2 distance between two GMM
+def MW2(pi0,pi1,mu0,mu1,S0,S1):
+    # return the MW2 discrete map and the MW2 distance between two GMM
     K0 = mu0.shape[0]
     K1 = mu1.shape[0]
     d  = mu0.shape[1]
@@ -127,10 +127,10 @@ def GW2(pi0,pi1,mu0,mu1,S0,S1):
             M[k,l]  = GaussianW2(mu0[k,:],mu1[l,:],S0[k,:,:],S1[l,:,:])
     # Then we compute the OT distance or OT map thanks to the OT library
     wstar     = ot.emd(pi0,pi1,M)         # discrete transport plan
-    distGW2   = np.sum(wstar*M)
-    return wstar,distGW2
+    distMW2   = np.sum(wstar*M)
+    return wstar,distM2
 
-def GW2cost(mu0,mu1,S0,S1):       # return the distance matrix M of size K0 x K1
+def M2cost(mu0,mu1,S0,S1):       # return the distance matrix M of size K0 x K1
     K0 = mu0.shape[0]
     K1 = mu1.shape[0]
     M = np.zeros((K0,K1))
@@ -140,8 +140,8 @@ def GW2cost(mu0,mu1,S0,S1):       # return the distance matrix M of size K0 x K1
             M[k,l]  = GaussianW2(mu0[k,:],mu1[l,:],S0[k,:,:],S1[l,:,:])
     return M
 
-def GW2_map(pi0,pi1,mu0,mu1,S0,S1,wstar,x):      
-    # return the GW2 maps between two GMM on the 1D grid x  
+def M2_map(pi0,pi1,mu0,mu1,S0,S1,wstar,x):      
+    # return the M2 maps between two GMM on the 1D grid x  
     n,K0,K1    = x.shape[0],mu0.shape[0],mu1.shape[0]
     T          = np.zeros((K0,K1,n))     # each Tkl = T[k,l,:] is of dimension n and correspond to the W2-map between component k of mu0 and component l of mu1
     tmpmean    = np.zeros(n)
