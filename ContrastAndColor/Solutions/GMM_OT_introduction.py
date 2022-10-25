@@ -140,7 +140,7 @@ def M2cost(mu0,mu1,S0,S1):       # return the distance matrix M of size K0 x K1
             M[k,l]  = GaussianW2(mu0[k,:],mu1[l,:],S0[k,:,:],S1[l,:,:])
     return M
 
-def M2_map(pi0,pi1,mu0,mu1,S0,S1,wstar,x):      
+def MW2_map(pi0,pi1,mu0,mu1,S0,S1,wstar,x):      
     # return the M2 maps between two GMM on the 1D grid x  
     n,K0,K1    = x.shape[0],mu0.shape[0],mu1.shape[0]
     T          = np.zeros((K0,K1,n))     # each Tkl = T[k,l,:] is of dimension n and correspond to the W2-map between component k of mu0 and component l of mu1
