@@ -128,7 +128,7 @@ def MW2(pi0,pi1,mu0,mu1,S0,S1):
     # Then we compute the OT distance or OT map thanks to the OT library
     wstar     = ot.emd(pi0,pi1,M)         # discrete transport plan
     distMW2   = np.sum(wstar*M)
-    return wstar,distM2
+    return wstar,distMW2
 
 def M2cost(mu0,mu1,S0,S1):       # return the distance matrix M of size K0 x K1
     K0 = mu0.shape[0]
