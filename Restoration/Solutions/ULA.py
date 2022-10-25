@@ -1,5 +1,6 @@
 import math as m
 import numpy as np
+from tqdm import tqdm
 
 def ULA_gauss(niter,delta,x0=0):
     Y = np.zeros(niter,)
