@@ -181,7 +181,7 @@ def new_feature_statistics(x, outputs: torch.Tensor, layers):
     return torch.cat((f, m_x, vectorized_cov_x))
 
 
-def textureSynthesisB (n_iters, log_every, delta, gamma, epsilon, cnn, target, outputs, layers, x):
+def textureSynthesisB (n_iters, log_every, delta, gamma, epsilon, cnn, target, outputs, layers, x, beta):
 
     ##### MODIFIED for using new_feature_statistics #####
     # Compute just once means spatial of activations of the target image. 
