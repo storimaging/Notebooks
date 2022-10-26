@@ -114,7 +114,7 @@ def A_loss(input: torch.Tensor, m_target: torch.Tensor, C_target: torch.Tensor, 
     loss = lambda1 * mse_loss(m_input, m_target) +  lambda2 * mse_loss(C_input, C_target)
     return loss
 
-def textureSynthesisA (n_iters, log_every, synth, cnn, target, gramm_targets, layers_weights, optimizer, _iter):
+def textureSynthesisA (n_iters, log_every, synth, cnn, target, gramm_targets, layers, layers_weights, optimizer, _iter):
 
     ##### Section Added #########
 
@@ -180,7 +180,7 @@ def B_loss(input: torch.Tensor, f_transform_target_modulus: torch.Tensor, lambda
 
     return loss
 
-def textureSynthesisB (n_iters, log_every, synth, cnn, target, gramm_targets, layers_weights, optimizer, _iter):
+def textureSynthesisB (n_iters, log_every, synth, cnn, target, gramm_targets, layers, layers_weights, optimizer, _iter):
 
     # Compute Fourier transform for target (Just once)
     f_transform_target_module = torch.abs(torch.fft.fft2(target))
@@ -242,7 +242,7 @@ def C_loss(input: torch.Tensor, mean_spatial_target: torch.Tensor, weight: float
     loss = weight * mse_loss(mean_Spatial(input), mean_spatial_target)
     return loss
 
-def textureSynthesisC (n_iters, log_every, synth, cnn, target, gramm_targets, layers_weights, optimizer, _iter):
+def textureSynthesisC (n_iters, log_every, synth, cnn, target, gramm_targets, layers, layers_weights, optimizer, _iter):
 
     ##### Section Added #########
 
