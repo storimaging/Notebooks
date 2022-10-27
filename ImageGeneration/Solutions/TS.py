@@ -242,7 +242,7 @@ def C_loss(input: torch.Tensor, mean_spatial_target: torch.Tensor, weight: float
     loss = weight * mse_loss(mean_Spatial(input), mean_spatial_target)
     return loss
 
-def textureSynthesisC (n_iters, log_every, synth, cnn, target, target_outputs, outputs, layers, layers_weights, optimizer):
+def textureSynthesisC (n_iters, log_every, synth, cnn, target, target_outputs, outputs, optimizer):
 
     ##### Section Added #########
 
@@ -264,7 +264,7 @@ def textureSynthesisC (n_iters, log_every, synth, cnn, target, target_outputs, o
 
             # Forward pass using synth. Get activations of selected layers for image synth (outputs).
             cnn(synth)
-            synth_outputs = [outputs[key] for key in layers] 
+            synth_outputs = [outputs[key] for key in range(37)] 
             
             ##### Section Changed #########
             # Compute loss for each activation
