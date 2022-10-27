@@ -59,23 +59,22 @@ def add_gaussian_noise(u,sigma):
     
     nrow, ncol = u.shape
     res = u + sigma * np.random.randn(nrow,ncol)
-    res = np.maximum(0,np.minimum(1,res))
+    #res = np.maximum(0,np.minimum(1,res))
     
     return res
 
 
 def todo_noise_histograms(imgray):
     
-    for sigma in [0,0.1,0.5]:
+    for sigma in [0,0.2,0.6]:
         imgray_noise = add_gaussian_noise(imgray,sigma)
         plot_histos(imgray_noise)
 
-def add_uniform_noise(u,sigma):
+def add_uniform_noise(u,alpha):
     
-    alpha = np.sqrt(3)*sigma
     nrow, ncol = u.shape
     res = u + (np.random.rand(nrow,ncol)-.5)*2*alpha
-    res = np.maximum(0,np.minimum(1,res))
+    #res = np.maximum(0,np.minimum(1,res))
     
     return res
 
@@ -98,7 +97,7 @@ def add_impulse_noise(u,p):
 
 def todo_impulse_noise_histograms(imgray):
     
-    for p in [0,.25,.5]:
+    for p in [0,.3,.7]:
         imgray_noise = add_impulse_noise(imgray,p)
         plot_histos(imgray_noise)
 
