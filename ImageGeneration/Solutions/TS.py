@@ -130,6 +130,8 @@ def textureSynthesisA (n_iters, log_every, synth, cnn, target, gramm_targets, ou
 
     ##### End Section Added ######
 
+    global iter_
+    iter_ = 0
     print(iter_)
 
     while iter_ <= n_iters:
