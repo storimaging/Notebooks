@@ -242,7 +242,7 @@ def C_loss(input: torch.Tensor, mean_spatial_target: torch.Tensor, weight: float
     loss = weight * mse_loss(mean_Spatial(input), mean_spatial_target)
     return loss
 
-def textureSynthesisC (n_iters, log_every, synth, cnn, target, gramm_targets, outputs, layers, layers_weights, optimizer):
+def textureSynthesisC (n_iters, log_every, synth, cnn, target, target_outputs, outputs, layers, layers_weights, optimizer):
 
     ##### Section Added #########
 
