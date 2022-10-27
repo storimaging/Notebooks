@@ -130,7 +130,8 @@ def textureSynthesisA (n_iters, log_every, synth, cnn, target, gramm_targets, ou
 
     ##### End Section Added ######
 
-    print(iter_)
+    global iter_
+    iter_ = 0
 
     while iter_ <= n_iters:
 
@@ -188,6 +189,9 @@ def textureSynthesisB (n_iters, log_every, synth, cnn, target, gramm_targets, ou
 
     # Define lambda
     lambda3 = 0.1
+
+    global iter_
+    iter_ = 0
 
     while iter_ <= n_iters:
 
@@ -256,6 +260,9 @@ def textureSynthesisC (n_iters, log_every, synth, cnn, target, target_outputs, o
     mean_target_outputs = [mean_Spatial(target) for target in target_outputs]
 
     ##### End Section Added ######
+
+    global iter_
+    iter_ = 0
 
     while iter_ <= n_iters:
 
