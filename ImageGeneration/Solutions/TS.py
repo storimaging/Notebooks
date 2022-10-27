@@ -184,6 +184,9 @@ def textureSynthesisB (n_iters, log_every, synth, cnn, target, gramm_targets, ou
     # Compute Fourier transform for target (Just once)
     f_transform_target_module = torch.abs(torch.fft.fft2(target))
 
+    # Define lambda
+    lambda3 = 0.1
+
     while iter_ <= n_iters:
 
         def closure():
