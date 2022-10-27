@@ -130,8 +130,6 @@ def textureSynthesisA (n_iters, log_every, synth, cnn, target, gramm_targets, ou
 
     ##### End Section Added ######
 
-    iter_ = 0
-
     while iter_ <= n_iters:
 
         def closure():
@@ -185,8 +183,6 @@ def textureSynthesisB (n_iters, log_every, synth, cnn, target, gramm_targets, ou
 
     # Compute Fourier transform for target (Just once)
     f_transform_target_module = torch.abs(torch.fft.fft2(target))
-
-    iter_ = 0
 
     while iter_ <= n_iters:
 
@@ -255,8 +251,6 @@ def textureSynthesisC (n_iters, log_every, synth, cnn, target, gramm_targets, ou
     mean_target_outputs = [mean_Spatial(target) for target in target_outputs]
 
     ##### End Section Added ######
-
-    iter_ = 0
 
     while iter_ <= n_iters:
 
