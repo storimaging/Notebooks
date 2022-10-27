@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 
 MEAN = (0.485, 0.456, 0.406)
+iter_ = 0
 
 # Based on Taras Savchyn's code
 # https://github.com/trsvchn/deep-textures/blob/main/deeptextures/utils.py
@@ -114,7 +115,7 @@ def A_loss(input: torch.Tensor, m_target: torch.Tensor, C_target: torch.Tensor, 
     loss = lambda1 * mse_loss(m_input, m_target) +  lambda2 * mse_loss(C_input, C_target)
     return loss
 
-def textureSynthesisA (n_iters, log_every, synth, cnn, target, gramm_targets, outputs, layers, layers_weights, optimizer, iter_):
+def textureSynthesisA (n_iters, log_every, synth, cnn, target, gramm_targets, outputs, layers, layers_weights, optimizer):
 
     ##### Section Added #########
 
