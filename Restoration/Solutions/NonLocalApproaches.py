@@ -4,8 +4,8 @@ from skimage.util import view_as_windows
 def moyCov(Y):
     
     mY = np.mean(Y, axis=1)
-    C = np.cov(Y)
-    Yc = (Y.T - mY.T).T
+    Yc = Y-mY.reshape(-1,1)
+    C = Yc @ Yc.T
     return mY,C,Yc
 
 
