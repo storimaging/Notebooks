@@ -1,7 +1,27 @@
 import numpy as np
-import os
-os.system("wget -nc https://raw.githubusercontent.com/storimaging/Notebooks/main/Restoration/AuxiliarFunctions/AuxiliarFunctions_PnP.py")
-from AuxiliarFunctions_PnP import *
+
+### Helper function ####
+
+# Denoiser function to be used by all the PnP implementations.
+# Inspired by UCLA optimization group's code    
+# https://github.com/uclaopt/Provable_Plug_and_Play
+def denoise(xtilde, denoiser, m, n):
+
+    # Scale xtilde to be in range of [0,1]
+    mintmp = np.min(xtilde)
+    maxtmp = np.max(xtilde)
+    xtilde = (xtilde - mintmp) / (maxtmp - mintmp)
+
+    # Denoise
+    xtilde_torch = np.reshape(xtilde, (1,1,m,n))
+    xtilde_torch = torch.from_numpy(xtilde_torch).type(torch.cuda.FloatTensor)
+    r = denoiser(xtilde_torch).cpu().numpy()
+    r = np.reshape(r, -1)
+    x = xtilde - r
+
+    # Rescale the denoised x back to original scale
+    x = x * (maxtmp - mintmp) + mintmp
+    return x
 
 def pnp_admm(noisy, denoiser, proximal_step, **opts):
     """
