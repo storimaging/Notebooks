@@ -68,9 +68,9 @@ def pnp_fbs(noisy, denoiser, gradient_step, **opts):
     """
     Parameters:
         :noisy - the noisy observation.
-        :denoiser - the Gaussian denoiser used in Plug-and-Play ADMM.
+        :denoiser - the Gaussian denoiser used in Plug-and-Play FBS.
         :gradient_step - the function which implements the gradient step: x- alpha*grad(f)
-        :opts - the kwargs for hyperparameters in Plug-and-Play ADMM.
+        :opts - the kwargs for hyperparameters in Plug-and-Play FBS.
     """
 
     # Process parameters
@@ -95,9 +95,9 @@ def pnp_bbs(noisy, denoiser, proximal_step, **opts):
     """
     Parameters:
         :noisy - the noisy observation.
-        :denoiser - the Gaussian denoiser used in Plug-and-Play ADMM.
+        :denoiser - the Gaussian denoiser used in Plug-and-Play BBS.
         :proximal_step - the function which implements the proximal step of the ADMM algorithm.
-        :opts - the kwargs for hyperparameters in Plug-and-Play ADMM.
+        :opts - the kwargs for hyperparameters in Plug-and-Play BBS.
     """
 
     # Process parameters
