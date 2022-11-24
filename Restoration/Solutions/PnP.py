@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 ### Helper function ####
 
@@ -22,6 +23,8 @@ def denoise(xtilde, denoiser, m, n):
     # Rescale the denoised x back to original scale
     x = x * (maxtmp - mintmp) + mintmp
     return x
+
+### PnP functions ####
 
 def pnp_admm(noisy, denoiser, proximal_step, **opts):
     """
