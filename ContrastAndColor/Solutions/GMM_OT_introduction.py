@@ -84,7 +84,7 @@ def GaussianMap(m0,m1,Sigma0,Sigma1,x):
 
 def GaussianBarycenterW2(m,Sigma,alpha,N):
     # Compute the W2 barycenter between several Gaussians
-    # mu has size Kxd, with K the number of Gaussians and d the space dimension
+    # m has size Kxd, with K the number of Gaussians and d the space dimension
     # Sigma has size Kxdxd
     K        = m.shape[0]  # number of Gaussians
     d        = m.shape[1]  # size of the space
@@ -105,7 +105,7 @@ def GaussianBarycenterW2(m,Sigma,alpha,N):
     for j in range(K):
         cost+= alpha[j]*GaussianW2(m[j,:],mn,Sigma[j,:,:],Sigman)
 
-    return mn,Sigman,cost       # return the Gaussian Barycenter (mun,Sigman) and the total cost
+    return mn,Sigman,cost       # return the Gaussian Barycenter (mn,Sigman) and the total cost
 
 
 ###############################
@@ -174,7 +174,7 @@ def MW2_map(pi0,pi1,m0,m1,S0,S1,wstar,x):
 def create_cost_matrix_from_gmm(gmm,alpha,N=10):
     """
     create the cost matrix for the multimarginal problem between all GMM
-    create the barycenters (mun,Sn) betweenn all Gaussian components 
+    create the barycenters (mn,Sn) betweenn all Gaussian components 
     """
     
     nMarginal       = len(alpha)               # number of marginals
