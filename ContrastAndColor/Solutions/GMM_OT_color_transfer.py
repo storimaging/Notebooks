@@ -175,7 +175,7 @@ def MW2_map(pi0,pi1,m0,m1,S0,S1,wstar,x):
 def create_cost_matrix_from_gmm(gmm,alpha,N=10):
     """
     create the cost matrix for the multimarginal problem between all GMM
-    create the barycenters (mun,Sn) betweenn all Gaussian components 
+    create the barycenters (mn,Sn) between all Gaussian components 
     """
     
     nMarginal       = len(alpha)               # number of marginals
