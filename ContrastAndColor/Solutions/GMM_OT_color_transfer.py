@@ -24,13 +24,13 @@ def display_gmm(gmm,n=50,ax=0,bx=1,ay=0,by=1,cmap='viridis',axis=None):
     if axis is None:
         axis = plt.gca()
         
-    [K,pi,mu,S] = gmm
+    [K,pi,m,S] = gmm
     
     x = np.linspace(ax, bx,num=n)
     y = np.linspace(ay, by,num=n)
     X, Y = np.meshgrid(x, y)
     XX = np.array([X.ravel(), Y.ravel()]).T
-    Z = densite_theorique2d(mu,S,pi,XX)
+    Z = densite_theorique2d(m,S,pi,XX)
     Z = Z.reshape(X.shape)
     plt.axis('equal')
     return axis.contour(X, Y, Z,8,cmap=cmap)    
@@ -39,22 +39,22 @@ def display_gmm(gmm,n=50,ax=0,bx=1,ay=0,by=1,cmap='viridis',axis=None):
 #### compute GMM densities
 ###############################
 
-def densite_theorique(mu,var,alpha,x):
-    # compute the 1D GMM density with parameters (mu,var) and weights alpha  at x 
-    K=mu.shape[0]
+def densite_theorique(m,var,alpha,x):
+    # compute the 1D GMM density with parameters (m,var) and weights alpha  at x 
+    K=m.shape[0]
     y=0
     #y=np.zeros(len(x))
     for j in range(K):
-        y+=alpha[j]*sps.norm.pdf(x,loc=mu[j,:],scale=np.sqrt(var[j,:,:]))
+        y+=alpha[j]*sps.norm.pdf(x,loc=m[j,:],scale=np.sqrt(var[j,:,:]))
     return y.reshape(x.shape)
 
-def densite_theorique2d(mu,Sigma,alpha,x):
-    # compute the 2D GMM density with parameters (mu, Sigma) and weights alpha at x
-    K = mu.shape[0]
+def densite_theorique2d(m,Sigma,alpha,x):
+    # compute the 2D GMM density with parameters (m, Sigma) and weights alpha at x
+    K = m.shape[0]
     alpha = alpha.reshape(1,K)
     y=0
     for j in range(K):
-        y+=alpha[0,j]*sps.multivariate_normal.pdf(x,mean=mu[j,:],cov=Sigma[j,:,:])
+        y+=alpha[0,j]*sps.multivariate_normal.pdf(x,mean=m[j,:],cov=Sigma[j,:,:])
     return y
 
 ###############################
@@ -83,14 +83,14 @@ def GaussianMap(m0,m1,Sigma0,Sigma1,x):
     Tx        = m1+(x-m0)@Sigma
     return Tx
 
-def GaussianBarycenterW2(mu,Sigma,alpha,N):
+def GaussianBarycenterW2(m,Sigma,alpha,N):
     # Compute the W2 barycenter between several Gaussians
-    # mu has size Kxd, with K the number of Gaussians and d the space dimension
+    # m has size Kxd, with K the number of Gaussians and d the space dimension
     # Sigma has size Kxdxd
-    K        = mu.shape[0]  # number of Gaussians
-    d        = mu.shape[1]  # size of the space
+    K        = m.shape[0]  # number of Gaussians
+    d        = m.shape[1]  # size of the space
     Sigman   = np.eye(d,d)
-    mun      = np.zeros((1,d))
+    mn      = np.zeros((1,d))
     cost = 0
     
     for n in range(N):
@@ -101,12 +101,12 @@ def GaussianBarycenterW2(mu,Sigma,alpha,N):
         Sigman  = T
     
     for j in range(K):
-        mun+= alpha[j]*mu[j,:]
+        mn+= alpha[j]*m[j,:]
     
     for j in range(K):
-        cost+= alpha[j]*GaussianW2(mu[j,:],mun,Sigma[j,:,:],Sigman)
+        cost+= alpha[j]*GaussianW2(m[j,:],mn,Sigma[j,:,:],Sigman)
 
-    return mun,Sigman,cost       # return the Gaussian Barycenter (mun,Sigman) and the total cost
+    return mn,Sigman,cost       # return the Gaussian Barycenter (mn,Sigman) and the total cost
 
 
 ###############################
@@ -114,36 +114,36 @@ def GaussianBarycenterW2(mu,Sigma,alpha,N):
 ###############################
 
 
-def MW2(pi0,pi1,mu0,mu1,S0,S1):
+def MW2(pi0,pi1,m0,m1,S0,S1):
     # return the MW2 discrete map and the MW2 distance between two GMM
-    K0 = mu0.shape[0]
-    K1 = mu1.shape[0]
-    d  = mu0.shape[1]
+    K0 = m0.shape[0]
+    K1 = m1.shape[0]
+    d  = m0.shape[1]
     S0 = S0.reshape(K0,d,d)
     S1 = S1.reshape(K1,d,d)
     M  = np.zeros((K0,K1))
     # First we compute the distance matrix between all Gaussians pairwise
     for k in range(K0):
         for l in range(K1):
-            M[k,l]  = GaussianW2(mu0[k,:],mu1[l,:],S0[k,:,:],S1[l,:,:])
+            M[k,l]  = GaussianW2(m0[k,:],m1[l,:],S0[k,:,:],S1[l,:,:])
     # Then we compute the OT distance or OT map thanks to the OT library
     wstar     = ot.emd(pi0,pi1,M)         # discrete transport plan
     distMW2   = np.sum(wstar*M)
     return wstar,distMW2
 
-def MW2cost(mu0,mu1,S0,S1):       # return the distance matrix M of size K0 x K1
-    K0 = mu0.shape[0]
-    K1 = mu1.shape[0]
+def MW2cost(m0,m1,S0,S1):       # return the distance matrix M of size K0 x K1
+    K0 = m0.shape[0]
+    K1 = m1.shape[0]
     M = np.zeros((K0,K1))
     # we compute the distance matrix between all Gaussians pairwise
     for k in range(K0):
         for l in range(K1):
-            M[k,l]  = GaussianW2(mu0[k,:],mu1[l,:],S0[k,:,:],S1[l,:,:])
+            M[k,l]  = GaussianW2(m0[k,:],m1[l,:],S0[k,:,:],S1[l,:,:])
     return M
 
-def MW2_map(pi0,pi1,mu0,mu1,S0,S1,wstar,x):      
+def MW2_map(pi0,pi1,m0,m1,S0,S1,wstar,x):      
     # return the MW2 maps between two GMM on the 1D grid x  
-    n,K0,K1    = x.shape[0],mu0.shape[0],mu1.shape[0]
+    n,K0,K1    = x.shape[0],m0.shape[0],m1.shape[0]
     T          = np.zeros((K0,K1,n))     # each Tkl = T[k,l,:] is of dimension n and correspond to the W2-map between component k of mu0 and component l of mu1
     tmpmean    = np.zeros(n)
     weightmean = np.zeros(n)
@@ -153,12 +153,12 @@ def MW2_map(pi0,pi1,mu0,mu1,S0,S1,wstar,x):
     for k in range(K0):
         for l in range(K1):
             if wstar[k,l]!=0:
-                T[k,l,:] = GaussianMap(mu0[k,:],mu1[l,:],S0[k,],S1[l],x).reshape(n,)
+                T[k,l,:] = GaussianMap(m0[k,:],m1[l,:],S0[k,],S1[l],x).reshape(n,)
                 for i in range(n):
                     Ti             = int(max(min(T[k,l,i],1),0)*99)
-                    Tmap[i,Ti]    += wstar[k,l]*sps.norm.pdf(x[i],loc=mu0[k],scale=np.sqrt(S0[k]))
-                    tmpmean[i]    += wstar[k,l]*sps.norm.pdf(x[i],loc=mu0[k],scale=np.sqrt(S0[k]))/densite_theorique(mu0,S0,pi0,x[i])*T[k,l,i]
-                    weightmean[i] += wstar[k,l]*sps.norm.pdf(x[i],loc=mu0[k],scale=np.sqrt(S0[k]))
+                    Tmap[i,Ti]    += wstar[k,l]*sps.norm.pdf(x[i],loc=m0[k],scale=np.sqrt(S0[k]))
+                    tmpmean[i]    += wstar[k,l]*sps.norm.pdf(x[i],loc=m0[k],scale=np.sqrt(S0[k]))/densite_theorique(m0,S0,pi0,x[i])*T[k,l,i]
+                    weightmean[i] += wstar[k,l]*sps.norm.pdf(x[i],loc=m0[k],scale=np.sqrt(S0[k]))
 
     tmpmean = np.uint(np.maximum(np.minimum(tmpmean,1),0)*99)
     for i in range(n):
@@ -185,28 +185,28 @@ def create_cost_matrix_from_gmm(gmm,alpha,N=10):
         K  = gmm[k][0]
         tup+=(K,)        
     C               = np.zeros(tup)
-    mun             = np.zeros(tup+(d,))
+    mn             = np.zeros(tup+(d,))
     Sn             = np.zeros(tup+(d,d))
         
     it = np.nditer(C,["multi_index"])
     while not it.finished:
         tup = it.multi_index        
-        mu = np.zeros((nMarginal,d))
+        m = np.zeros((nMarginal,d))
         Sigma = np.zeros((nMarginal,d,d))
         
         for k in range(nMarginal):
-            mu[k,:]      = gmm[k][2][tup[k]]
+            m[k,:]      = gmm[k][2][tup[k]]
             Sigma[k,:,:] = gmm[k][3][tup[k]]
             
-        mu    = np.array(mu)    
+        m    = np.array(m)    
         Sigma = np.array(Sigma)    
-        [mun[tup],Sn[tup],cost] = GaussianBarycenterW2(mu,Sigma,alpha,N)
+        [mn[tup],Sn[tup],cost] = GaussianBarycenterW2(m,Sigma,alpha,N)
         
         C[tup] = cost
         
         it.iternext()
     
-    return C,mun,Sn  
+    return C,mn,Sn  
 
 def solveMMOT(pi, costMatrix, epsilon = 1e-10):
     """ Author : Alexandre Saint-Dizier
