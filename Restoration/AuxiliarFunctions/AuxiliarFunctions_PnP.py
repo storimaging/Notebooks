@@ -4,6 +4,7 @@ import torch.nn as nn
 from torch.nn.functional import conv2d
 from torch.nn.parameter import Parameter
 import argparse
+from network_swinir import SwinIR as net
 
 def load_model_RYU(path):
     net = DnCNN(channels=1, num_of_layers=17)
@@ -273,4 +274,27 @@ def load_BF_CNN(model_name, grayscale):
     model = BF_CNN(args).cuda()
     model.load_state_dict(torch.load(model_name))
     model.eval() 
+    return model
+
+################################################################################################################
+
+# Code inspired on Jingyun Liang's code
+# https://github.com/JingyunLiang/SwinIR/
+def load_SwinIR(model_name, grayscale):
+    if grayscale is True: 
+        model = net(upscale=1, in_chans=1, img_size=128, window_size=8,
+                    img_range=1., depths=[6, 6, 6, 6, 6, 6], embed_dim=180, num_heads=[6, 6, 6, 6, 6, 6],
+                    mlp_ratio=2, upsampler='', resi_connection='1conv')
+        param_key_g = 'params'
+
+    else:
+        model = net(upscale=1, in_chans=3, img_size=128, window_size=8,
+                    img_range=1., depths=[6, 6, 6, 6, 6, 6], embed_dim=180, num_heads=[6, 6, 6, 6, 6, 6],
+                    mlp_ratio=2, upsampler='', resi_connection='1conv')
+        param_key_g = 'params'
+    
+    model.cuda()
+    model.load_state_dict(torch.load(model_name))
+    model.eval()
+    #model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
     return model
