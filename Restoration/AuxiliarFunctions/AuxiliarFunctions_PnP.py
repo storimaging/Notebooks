@@ -293,8 +293,7 @@ def load_SwinIR(model_name, grayscale):
                     mlp_ratio=2, upsampler='', resi_connection='1conv')
         param_key_g = 'params'
     
-    model.cuda()
-    model.load_state_dict(torch.load(model_name))
-    model.eval()
-    #model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
+    pretrained_model = torch.load(model_name)
+    model.load_state_dict(pretrained_model[param_key_g] if param_key_g in pretrained_model.keys() else pretrained_model, strict=True)
+    model.cuda().eval()
     return model
