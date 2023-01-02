@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import models.basicblock as B
+import basicblock as B
 import numpy as np
 
 '''
