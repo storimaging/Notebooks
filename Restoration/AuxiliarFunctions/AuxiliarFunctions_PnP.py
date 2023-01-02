@@ -279,7 +279,11 @@ def load_BF_CNN(model_name, grayscale):
 ################################################################################################################
 
 
-def load_DPIR(model_name): 
+def load_DPIR(model_name, grayscale): 
+    if grayscale is True:
+        n_channels = 1        
+    else:
+        n_channels = 3                 
     model = net(in_nc=n_channels+1, out_nc=n_channels, nc=[64, 128, 256, 512], nb=4, act_mode='R', downsample_mode="strideconv", upsample_mode="convtranspose")
     model.load_state_dict(torch.load(model_name), strict=True)
     model.cuda().eval()
