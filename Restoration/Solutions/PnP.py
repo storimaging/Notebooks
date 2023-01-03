@@ -6,7 +6,7 @@ import torch
 # Denoiser function to be used by all the PnP implementations.
 # Inspired by UCLA optimization group's code    
 # https://github.com/uclaopt/Provable_Plug_and_Play
-def denoise(xtilde, denoiser, m, n, **opt):
+def denoise(xtilde, denoiser, m, n, **opts):
     
     sigma_model = opts.get('sigma_model', 5)
     noise_level_map = opts.get('noise_level_map', False)
@@ -61,7 +61,7 @@ def pnp_admm(noisy, denoiser, proximal_step, **opts):
         #x = denoise(xtilde, denoiser, m, n)
 
         # Proximal step
-        y = denoise(x+u, denoiser, m, n, **opt)
+        y = denoise(x+u, denoiser, m, n, **opts)
         #y = proximal_step(x+u, noisy_flat, **opts)
 
         # Dual update      
@@ -93,7 +93,7 @@ def pnp_fbs(noisy, denoiser, gradient_step, **opts):
 
         # FBS step
         xtilde = np.copy(gradient_step(x, noisy_flat, **opts))
-        x = denoise(xtilde, denoiser, m, n, **opt)
+        x = denoise(xtilde, denoiser, m, n, **opts)
 
     # Get restored image
     x = np.reshape((x) , (m, n))
@@ -123,7 +123,7 @@ def pnp_bbs(noisy, denoiser, proximal_step, **opts):
         x = proximal_step(xtilde, noisy_flat, **opts)
 
         # Denoising step     
-        x = denoise(x, denoiser, m, n, **opt)
+        x = denoise(x, denoiser, m, n, **opts)
 
     # Get restored image
     x = np.reshape((x) , (m, n))
