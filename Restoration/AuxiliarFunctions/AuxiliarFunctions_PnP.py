@@ -287,4 +287,6 @@ def load_DPIR(model_name, grayscale):
     model = net(in_nc=n_channels+1, out_nc=n_channels, nc=[64, 128, 256, 512], nb=4, act_mode='R', downsample_mode="strideconv", upsample_mode="convtranspose")
     model.load_state_dict(torch.load(model_name), strict=True)
     model.cuda().eval()
+    for k, v in model.named_parameters():
+        v.requires_grad = False
     return model

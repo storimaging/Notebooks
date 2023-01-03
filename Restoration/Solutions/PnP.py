@@ -6,7 +6,10 @@ import torch
 # Denoiser function to be used by all the PnP implementations.
 # Inspired by UCLA optimization group's code    
 # https://github.com/uclaopt/Provable_Plug_and_Play
-def denoise(xtilde, denoiser, m, n):
+def denoise(xtilde, denoiser, m, n, **opt):
+    
+    sigma_model = opts.get('sigma_model', 5)
+    noise_level_map = opts.get('noise_level_map', False)
 
     # Scale xtilde to be in range of [0,1]
     mintmp = np.min(xtilde)
@@ -16,6 +19,11 @@ def denoise(xtilde, denoiser, m, n):
     # Denoise
     xtilde_torch = np.reshape(xtilde, (1,1,m,n))
     xtilde_torch = torch.from_numpy(xtilde_torch).type(torch.cuda.FloatTensor)
+
+    if (noise_level_map):
+       noise_map = torch.FloatTensor([sigma_model]).repeat(1, 1, m, n).cuda()
+       xtilde_torch = torch.cat((xtilde_torch, noise_map), dim=1)
+
     r = denoiser(xtilde_torch).cpu().numpy()
     r = np.reshape(r, -1)
     x = xtilde - r
@@ -53,7 +61,7 @@ def pnp_admm(noisy, denoiser, proximal_step, **opts):
         #x = denoise(xtilde, denoiser, m, n)
 
         # Proximal step
-        y = denoise(x+u, denoiser, m, n)
+        y = denoise(x+u, denoiser, m, n, **opt)
         #y = proximal_step(x+u, noisy_flat, **opts)
 
         # Dual update      
@@ -85,7 +93,7 @@ def pnp_fbs(noisy, denoiser, gradient_step, **opts):
 
         # FBS step
         xtilde = np.copy(gradient_step(x, noisy_flat, **opts))
-        x = denoise(xtilde, denoiser, m, n)
+        x = denoise(xtilde, denoiser, m, n, **opt)
 
     # Get restored image
     x = np.reshape((x) , (m, n))
@@ -115,7 +123,7 @@ def pnp_bbs(noisy, denoiser, proximal_step, **opts):
         x = proximal_step(xtilde, noisy_flat, **opts)
 
         # Denoising step     
-        x = denoise(x, denoiser, m, n)
+        x = denoise(x, denoiser, m, n, **opt)
 
     # Get restored image
     x = np.reshape((x) , (m, n))
