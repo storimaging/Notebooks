@@ -335,7 +335,7 @@ def load_DnCNN_nobn(path, grayscale, device):
         n_channels = 3 
 
     avg, bn, depth = False, False, 20
-    net = simple_CNN(n_ch_in=channels, n_ch_out=channels, n_ch=64, nl_type='relu', depth=depth, bn=bn)
+    net = simple_CNN(n_ch_in=n_channels, n_ch_out=n_channels, n_ch=64, nl_type='relu', depth=depth, bn=bn)
 
     model = nn.DataParallel(net).to(device)
     model.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage).module.state_dict())
