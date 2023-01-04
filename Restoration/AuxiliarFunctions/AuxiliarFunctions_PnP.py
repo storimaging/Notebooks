@@ -6,9 +6,9 @@ from torch.nn.parameter import Parameter
 import argparse
 from network_unet import UNetRes as net
 
-def load_model_RYU(path):
+def load_model_RYU(path, device):
     net = DnCNN(channels=1, num_of_layers=17)
-    model = nn.DataParallel(net).cuda()
+    model = nn.DataParallel(net).to(device)
     model.load_state_dict(torch.load(path))
     model.eval()
     return model
@@ -256,7 +256,7 @@ class BF_CNN(nn.Module):
 
 # Code inspired on Lab For Computational Vision's code
 # https://github.com/LabForComputationalVision/universal_inverse_problem
-def load_BF_CNN(model_name, grayscale): 
+def load_BF_CNN(model_name, grayscale, device): 
     '''
     @ grayscale: if True, number of input and output channels are set to 1. Otherwise 3
     '''
@@ -271,7 +271,7 @@ def load_BF_CNN(model_name, grayscale):
         parser.add_argument('--num_channels', default= 3)
     
     args = parser.parse_args('')
-    model = BF_CNN(args).cuda()
+    model = BF_CNN(args).to(device)
     model.load_state_dict(torch.load(model_name))
     model.eval() 
     return model
@@ -279,14 +279,65 @@ def load_BF_CNN(model_name, grayscale):
 ################################################################################################################
 
 
-def load_DPIR(model_name, grayscale): 
+def load_DRUnet(model_name, grayscale, device): 
     if grayscale is True:
         n_channels = 1        
     else:
         n_channels = 3                 
     model = net(in_nc=n_channels+1, out_nc=n_channels, nc=[64, 128, 256, 512], nb=4, act_mode='R', downsample_mode="strideconv", upsample_mode="convtranspose")
     model.load_state_dict(torch.load(model_name), strict=True)
-    model.cuda().eval()
+    model.to(device).eval()
     for k, v in model.named_parameters():
         v.requires_grad = False
+    return model
+
+################################################################################################################
+
+# BASP group's code
+# https://github.com/basp-group/PnP-MMO-imaging/
+class simple_CNN(nn.Module):
+    def __init__(self, n_ch_in=3, n_ch_out=3, n_ch=64, nl_type='relu', depth=5, bn=False):
+        super(simple_CNN, self).__init__()
+
+        self.nl_type = nl_type
+        self.depth = depth
+        self.bn = bn
+
+        self.in_conv = nn.Conv2d(n_ch_in, n_ch, kernel_size=3, stride=1, padding=1, bias=True)
+        self.conv_list = nn.ModuleList([nn.Conv2d(n_ch, n_ch, kernel_size=3, stride=1, padding=1, bias=True) for _ in range(self.depth-2)])
+        self.out_conv = nn.Conv2d(n_ch, n_ch_out, kernel_size=3, stride=1, padding=1, bias=True)
+
+        if self.nl_type == 'relu':
+            self.nl_list = nn.ModuleList([nn.LeakyReLU() for _ in range(self.depth-1)])
+        if self.bn:
+            self.bn_list = nn.ModuleList([nn.BatchNorm2d(n_ch) for _ in range(self.depth-2)])
+
+    def forward(self, x_in):
+
+        x = self.in_conv(x_in)
+        x = self.nl_list[0](x)
+
+        for i in range(self.depth-2):
+            x_l = self.conv_list[i](x)  
+            if self.bn:
+                x_l = self.bn_list[i](x_l)
+            x = self.nl_list[i+1](x_l)
+        
+        x_out = self.out_conv(x)+x_in  # Residual skip
+
+        return x_out
+
+
+def load_DnCNN_nobn(path, grayscale, device):
+    if grayscale is True:
+        n_channels = 1        
+    else:
+        n_channels = 3 
+
+    avg, bn, depth = False, False, 20
+    net = simple_CNN(n_ch_in=channels, n_ch_out=channels, n_ch=64, nl_type='relu', depth=depth, bn=bn)
+
+    model = nn.DataParallel(net).to(device)
+    model.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage).module.state_dict())
+    model.eval()
     return model
