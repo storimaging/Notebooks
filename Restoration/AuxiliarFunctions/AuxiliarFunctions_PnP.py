@@ -5,6 +5,36 @@ from torch.nn.functional import conv2d
 from torch.nn.parameter import Parameter
 import argparse
 from network_unet import UNetRes as net
+import os
+
+
+# model_types options: [DnCNN, BF_CNN, BF_CNN, DRUnet, DnCNN_nobn]
+# model_name options: [RealSN_DnCNN_noise5.pth, 
+#                      BFCNN_BSD400_gray_noise0to100_model.pt, 
+#                      BFCNN_mnist_gray_noise0to100_model.pt,
+#                      drunet_gray.pth] -> Not yet available. 
+#                      DnCNN_nobn_nch_1_nlev_0.01_dict.pth,  -> Not yet available. 
+#                      DnCNN_nobn_nch_1_nlev_0.009_dict.pth, -> Not yet available. 
+#                      DnCNN_nobn_nch_3_nlev_0.01_dict.pth,  -> Not yet available. 
+#                      DnCNN_nobn_nch_3_nlev_0.007_dict.pth, -> Not yet available. 
+def load_denoiser(name_denoiser, model_name, device, grayscale = True):
+    
+    if name_denoiser == "DnCNN":
+        os.system("wget https://raw.githubusercontent.com/storimaging/Notebooks/main/Models/" + model_name)
+        model = load_model_RYU(model_name, device)
+    elif name_denoiser == "BF_CNN":
+        os.system("wget https://raw.githubusercontent.com/storimaging/Notebooks/main/Models/" + model_name)
+        model = load_BF_CNN(model_name, grayscale, device)
+    elif name_denoiser == "DRUnet":
+        os.system("wget https://github.com/cszn/KAIR/releases/download/v1.0/" + model_name)
+        model = load_DRUnet(model_name, grayscale, device)
+    elif name_denoiser == "DnCNN_nobn":
+        os.system("wget https://raw.githubusercontent.com/storimaging/Notebooks/main/Models/" + model_name)
+        model = load_DnCNN_nobn(model_name, grayscale, device)
+    return model
+
+################################################################################################################
+
 
 def load_model_RYU(path, device):
     net = DnCNN(channels=1, num_of_layers=17)
