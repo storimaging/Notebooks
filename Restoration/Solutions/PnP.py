@@ -10,6 +10,7 @@ def denoise(xtilde, denoiser, m, n, **opts):
     
     sigma_model = opts.get('sigma_model', 5)
     noise_level_map = opts.get('noise_level_map', False)
+    device = opts.get('device', 'cpu')
 
     # Scale xtilde to be in range of [0,1]
     mintmp = np.min(xtilde)
