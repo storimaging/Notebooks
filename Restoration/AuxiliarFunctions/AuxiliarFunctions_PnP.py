@@ -39,7 +39,7 @@ def load_denoiser(name_denoiser, model_name, device, grayscale = True):
 def load_model_RYU(path, device):
     net = DnCNN(channels=1, num_of_layers=17)
     model = nn.DataParallel(net).to(device)
-    model.load_state_dict(torch.load(path))
+    model.load_state_dict(torch.load(path, map_location=torch.device(device)))
     model.eval()
     return model
 
@@ -302,7 +302,7 @@ def load_BF_CNN(model_name, grayscale, device):
     
     args = parser.parse_args('')
     model = BF_CNN(args).to(device)
-    model.load_state_dict(torch.load(model_name))
+    model.load_state_dict(torch.load(model_name, map_location=torch.device(device)))
     model.eval() 
     return model
 
@@ -315,7 +315,7 @@ def load_DRUnet(model_name, grayscale, device):
     else:
         n_channels = 3                 
     model = net(in_nc=n_channels+1, out_nc=n_channels, nc=[64, 128, 256, 512], nb=4, act_mode='R', downsample_mode="strideconv", upsample_mode="convtranspose")
-    model.load_state_dict(torch.load(model_name), strict=True)
+    model.load_state_dict(torch.load(model_name, map_location=torch.device(device)), strict=True)
     model.to(device).eval()
     for k, v in model.named_parameters():
         v.requires_grad = False
