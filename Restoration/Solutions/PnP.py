@@ -18,10 +18,10 @@ def denoise(xtilde, denoiser, m, n, **opts):
 
     # Denoise
     xtilde_torch = np.reshape(xtilde, (1,1,m,n))
-    xtilde_torch = torch.from_numpy(xtilde_torch).type(torch.cuda.FloatTensor)
+    xtilde_torch = torch.from_numpy(xtilde_torch).type(torch.FloatTensor).to(device)
 
     if (noise_level_map):
-       noise_map = torch.FloatTensor([sigma_model]).repeat(1, 1, m, n).cuda()
+       noise_map = torch.FloatTensor([sigma_model]).repeat(1, 1, m, n).to(device)
        xtilde_torch = torch.cat((xtilde_torch, noise_map), dim=1)
 
     r = denoiser(xtilde_torch).cpu().numpy()
