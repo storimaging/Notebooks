@@ -21,10 +21,13 @@ def todo_HSI_after_compression(imrgb):
 
     axes[0].imshow(H, cmap='gray')
     axes[0].set_title('H')
+    axes[0].axis('off')
     axes[1].imshow(S, cmap='gray')
     axes[1].set_title('S')
+    axes[1].axis('off')
     axes[2].imshow(I, cmap='gray')
     axes[2].set_title('I')
+    axes[2].axis('off')
     fig.tight_layout()
 
 def todo_color_quantization_with_kmeans(imrgb,k):
@@ -40,6 +43,7 @@ def todo_color_quantization_with_kmeans(imrgb,k):
     
     fig = plt.figure(figsize=(15, 7))
     axis = fig.add_subplot(1, 2, 1)
+    plt.axis('off')
     axis.imshow(mu[x_pred].reshape((nrow,ncol,3)),cmap='gray')
     axis = fig.add_subplot(1, 2, 2, projection="3d")
     axis.scatter(mu[:, 0], mu[:,1],mu[:, 2],c=mu,s=5e4*pi)
@@ -66,8 +70,10 @@ def todo_gray_world(imrgb):
     f, axe = plt.subplots(1,2,figsize=(15,15))
     axe[1].imshow(grey_world)
     axe[1].set_title('Grey-World correction')
+    axe[1].axis('off')
     axe[0].imshow(imrgb)
     axe[0].set_title('Original')
+    axe[0].axis('off')
 
 
 def todo_shades_of_gray(imrgb,p):
@@ -86,8 +92,10 @@ def todo_shades_of_gray(imrgb,p):
     f, axe = plt.subplots(1,2,figsize=(15,15))
     axe[1].imshow(new)
     axe[1].set_title('Shades-of-gray correction')
+    axe[1].axis('off')
     axe[0].imshow(imrgb)
     axe[0].set_title('Original')
+    axe[0].axis('off')
 
 def todo_interpolate_3_channels(raw,imrgb):
 
