@@ -1,6 +1,7 @@
 import torch
 from torchvision.transforms.functional import resize, to_tensor, to_pil_image
 from PIL import Image
+import matplotlib.pyplot as plt
 
 # Utilities
 # Functions to manage images
