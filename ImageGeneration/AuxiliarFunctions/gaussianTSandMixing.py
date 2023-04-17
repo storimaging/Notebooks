@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from google.colab import widgets
 
 def loadImage(input_image_name):
     u = plt.imread(input_image_name)
