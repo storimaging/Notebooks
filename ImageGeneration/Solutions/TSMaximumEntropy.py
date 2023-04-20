@@ -64,8 +64,10 @@ def printResults(target, opt_img, iter, loss):
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(10, 20))
     axes[0].imshow(to_pil(target.squeeze(0)))
     axes[0].set_title('Original texture')
+    axes[0].axis('off')
     axes[1].imshow(to_pil(opt_img.squeeze(0)))
     axes[1].set_title('Synthesis')
+    axes[1].axis('off')
     fig.tight_layout()
     plt.pause(0.05)
 
