@@ -53,10 +53,12 @@ def compare_images(imgs, n_p, gray):
                 plt.title('Rho = ' + str(rhos[i]))
                 plt.axis('off')
                 plt.imshow(np.clip(img,0,1), cmap='gray',vmin=0,vmax=1)
+                plt.show()
             else:
                 plt.title('Rho = ' + str(rhos[i]))
                 plt.axis('off')
                 plt.imshow(np.clip(img,0,1))
+                plt.show()
 
 
 def printImages(u, P, S, size1, size2):
