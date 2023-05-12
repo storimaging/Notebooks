@@ -5,7 +5,7 @@ def moyCov(Y):
     
     mY = np.mean(Y, axis=1)
     Yc = Y-mY.reshape(-1,1)
-    C = Yc @ Yc.T
+    C = np.cov(Y)
     return mY,C,Yc
 
 
