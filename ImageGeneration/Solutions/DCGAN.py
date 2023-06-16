@@ -50,19 +50,21 @@ def train(train_loader, optimizerD, optimizerG, y_1, y_0, criterion, num_epochs,
                 show_netG(zviz)
                 
 
-def InterpolationInLatentSpace(k, device, netG, imshow):
+def InterpolationInLatentSpace(batch_size, nz, device, netG, imshow):
+    nlatent = 10
+    ninterp = 20
+    genimages = torch.empty(0,1,28,28).to(device)
+
     with torch.no_grad():
-        nlatent = 10
-        ninterp = 20
-        z0 = torch.randn(nlatent,k).to(device)
-        z1 = torch.randn(nlatent,k).to(device)
+        z0 = torch.randn(batch_size, nz, 1, 1, device=device)
+        z1 = torch.randn(batch_size, nz, 1, 1, device=device) 
+        alpha = torch.linspace(0.,1.,ninterp).to(device) 
 
-        alpha = torch.linspace(0.,1.,ninterp).view(ninterp,1,1).to(device)
-
-        z = alpha*z0 + (1.-alpha)*z1
-        z = z.transpose(1,0)
-        print(z.size())
-        genimages = netG(z)
-        imshow(torchvision.utils.make_grid(genimages.to('cpu'), nrow=ninterp))
+        for a in alpha:
+           z = a*z0 + (1.-a)*z1 
+           imgs = netG(z)[:nlatent] # returns 128 images from the generator model. Save the first #nlatent
+           genimages = torch.cat((genimages, imgs), dim=0) # add images to result vector for later display
+        
+        imshow(torchvision.utils.make_grid(genimages.to('cpu'), nrow=ninterp))  
 
 
