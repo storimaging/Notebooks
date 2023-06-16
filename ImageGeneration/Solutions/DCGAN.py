@@ -1,7 +1,8 @@
 import torch
+import torchvision
 
 # Code based on DCGANs tutorial https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html
-def train(train_loader, optimizerD, optimizerG, y_1, y_0, criterion, num_epochs, log_every):
+def train(train_loader, optimizerD, optimizerG, y_1, y_0, criterion, num_epochs, log_every, batch_size, nz, device, netG,netD, show_netG):
     zviz = torch.randn(batch_size,nz,1,1).to(device)
     for epoch in range(num_epochs):
         # For each batch in the train_loader
@@ -49,7 +50,7 @@ def train(train_loader, optimizerD, optimizerG, y_1, y_0, criterion, num_epochs,
                 show_netG(zviz)
                 
 
-def InterpolationInLatentSpace():
+def InterpolationInLatentSpace(k, device, netG, imshow):
     with torch.no_grad():
         nlatent = 10
         ninterp = 20
@@ -61,6 +62,7 @@ def InterpolationInLatentSpace():
         z = alpha*z0 + (1.-alpha)*z1
         z = z.transpose(1,0)
         print(z.size())
-        genimages = G_net(z)
+        genimages = netG(z)
         imshow(torchvision.utils.make_grid(genimages.to('cpu'), nrow=ninterp))
+
 
