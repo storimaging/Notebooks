@@ -64,7 +64,10 @@ def InterpolationInLatentSpace(batch_size, nz, device, netG, imshow):
            z = a*z0 + (1.-a)*z1 
            imgs = netG(z)[:nlatent] # returns 128 images from the generator model. Save the first #nlatent
            genimages = torch.cat((genimages, imgs), dim=0) # add images to result vector for later display
-        
-        imshow(torchvision.utils.make_grid(genimages.to('cpu'), nrow=ninterp))  
+        # transpose the order of images and display:   
+        genimages = genimages.reshape(nlatent, ninterp,1,28,28)
+        genimages = genimages.transpose(0,1)
+        genimages = genimages.reshape(nlatent*ninterp,1,28,28)
+        imshow(torchvision.utils.make_grid(genimages.to('cpu'), nrow=ninterp))
 
 
