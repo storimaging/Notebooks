@@ -81,6 +81,8 @@ def sampling_orientation_field(N,M,LSDres, Theta0):
     X, Y = np.meshgrid(np.arange(0, M), np.arange(0, N)) #Coordinate Matrix
     ImNew = 2 * np.pi * (np.random.rand(N, M) - 0.5)  # New image of orientations
 
+    nrect, nc = LSDres.shape
+
     # iterate in detected rectangles from output of LSD algorithm.
     for r in range(nrect):
         # Get values from the rectangle
