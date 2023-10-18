@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.signal
 
+# basic functions div, grad, laplacian, no periodicity
+
 def div(cx,cy):
     """
     cy and cy are coordonates of a vector field.
@@ -46,6 +48,52 @@ def laplacian(im):
     cx, cy = grad(im)
     return div(cx, cy)
 
+
+# basic functions, periodicity
+
+def div_per(cx,cy):
+    """
+    cy and cy are coordonates of a vector field.
+    #the function computes the discrete divergence of this vector field
+    """
+    nr,nc=cx.shape
+
+    ddx=np.zeros((nr,nc))
+    ddy=np.zeros((nr,nc))
+
+    ddx[:,1:]=cx[:,1:]-cx[:,0:-1]
+    ddx[:,0]=cx[:,0] - cx[:,-1]
+  
+    ddy[1:,:]=cy[1:,:]-cy[0:-1,:]
+    ddy[0,:]=cy[0,:] - cy[-1,:]
+ 
+    d=ddx+ddy
+
+    return d
+
+
+def grad_per(im):
+    """
+    computes the gradient of the image 'im'
+    """
+    nr,nc=im.shape
+    gx = np.zeros((nr,nc))
+    gy = np.zeros((nr,nc))
+    
+    gx[:,:-1] = im[:,1:]-im[:,0:-1]
+    gx[:,-1] = im[:,0]-im[:,-1]
+
+    gy[:-1,:] =im[1:,:]-im[0:-1,:]
+    gy[-1,:] = im[0,:]-im[-1,:]
+
+    return gx,gy
+
+
+
+
+
+
+# restoration
 
 def inpainting(v, epsilon, tau, niter, mask):
     """
@@ -124,7 +172,7 @@ def tvdeconv(ub,k,lambd,niter):
 
 def chambolle_pock_prox_TV(TV,ub,lambd,niter, **opts):
     """
-    the function solves the problem
+    the function solves the problem (for a non periodic image u)
     - TVL2
        argmin_u   1/2 \| u - ub\|^2 + \lambda TV(u)
     - or TVL2A
@@ -204,7 +252,7 @@ def chambolle_pock_deblurring_TVL2(ub,h,lambd,niter):
     for k in range(niter):
         
         # Subgradient step on p 
-        ux,uy  = grad(ubar)
+        ux,uy  = grad_per(ubar)
         p = p + sigma*lambd*np.stack((ux,uy),axis=2)
         normep = np.sqrt(p[:,:,0]**2+p[:,:,1]**2)
         normep = normep*(normep>1) + (normep<=1)
@@ -212,7 +260,7 @@ def chambolle_pock_deblurring_TVL2(ub,h,lambd,niter):
         p[:,:,1] = p[:,:,1]/normep
         
         # Subgradient step on u
-        d=div(p[:,:,0],p[:,:,1])
+        d=div_per(p[:,:,0],p[:,:,1])
         unew = (ut+tau*lambd*d+tau*convol_periodic(ub, hc)) 
         unew = IdplustauATA_inv(unew, tau,h)
     
