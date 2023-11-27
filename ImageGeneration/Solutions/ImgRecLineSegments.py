@@ -31,28 +31,20 @@ def reconstructRectangles(LSDres, N, M):
     return Im
 
 def visualize_rectangles(im):
-    gray_image = (im > 0).astype(np.uint8)
+    gray_image = im
 
-    # Create a figure with two subplots in one row and two columns
-    fig, axs = plt.subplots(1, 2, figsize=(10, 5))
+    # make plot
+    fig, ax = plt.subplots()
 
-    # Subplot 1: Grayscale Image
-    axs[0].imshow(gray_image, cmap='gray')
-    axs[0].axis('off')
-    axs[0].set_title('Grayscale')
+    # show image
+    shw = ax.imshow(gray_image, interpolation='None', cmap='gray')
 
-    # Subplot 2: Color Image
-    sh = axs[1].imshow(gray_image, cmap='hsv')
-    axs[1].axis('off')
-    axs[1].set_title('HSV Colormap')
+    # make bar
+    bar = plt.colorbar(shw)
 
-    # Add a colorbar for the second subplot
-    cbar = fig.colorbar(sh, ax=axs[1], orientation='vertical')
-    cbar.set_label('HSV Values')
-
-    # Adjust the spacing between subplots to make the colorbar proportional
-    plt.tight_layout()
+    plt.axis('off')
     plt.show()
+
 
 
 #### Excercise 2 ####
@@ -68,8 +60,8 @@ def LSD_Statistics(LSDres, ImRect):
 
     print("-------------------------------------------------")
     print("Number of detected rectangles: ", LSDres.shape[0])
-    print("Fraction of overlap within area covered by rectangles: ", "{:.2f}".format(overlap_rectangles_area))
-    print("Fraction of overlap with respect to the total number of pixels: ", "{:.2f}".format(overlap_total_area))
+    print("Percentage of overlap within area covered by rectangles: ", "{:.2f}".format(overlap_rectangles_area))
+    print("Percentage of overlap with respect to the total number of pixels: ", "{:.2f}".format(overlap_total_area))
     print("Number of detected rectangles with precision 1/8: ", nb_precis0125)
     print("Percentage of detected rectangles with precision 1/8: ", 100 * nb_precis0125 / LSDres.shape[0])
     print("-------------------------------------------------")
