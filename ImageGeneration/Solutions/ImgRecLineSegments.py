@@ -23,7 +23,7 @@ def reconstructRectangles(LSDres, N, M):
 
         # Checks if each point is inside the rectangle defined by (x1, y1) and (x2, y2).
         # The points that meet the condition are marked as True in the Im array.
-        # Distance and orientation are check in Im1 and Im2 expresions.
+        # Distance and orientation are checked in Im1 and Im2 expresions.
         Im1 = np.abs((X - (x1 + x2) / 2) * (x2 - x1) + (Y - (y1 + y2) / 2) * (y2 - y1)) < 0.5 * ((x2 - x1)**2 + (y2 - y1)**2)
         Im2 = np.abs((X - (x1 + x2) / 2) * (y1 - y2) + (Y - (y1 + y2) / 2) * (x2 - x1)) < 0.5 * w * np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
         Im += Im1 * Im2
@@ -63,7 +63,7 @@ def LSD_Statistics(LSDres, ImRect):
     print("Percentage of overlap within area covered by rectangles: ", "{:.2f}".format(overlap_rectangles_area))
     print("Percentage of overlap with respect to the total number of pixels: ", "{:.2f}".format(overlap_total_area))
     print("Number of detected rectangles with precision 1/8: ", nb_precis0125)
-    print("Percentage of detected rectangles with precision 1/8: ", 100 * nb_precis0125 / LSDres.shape[0])
+    print("Percentage of detected rectangles with precision 1/8: ", "{:.2f}".format(100 * nb_precis0125 / LSDres.shape[0]))
     print("-------------------------------------------------")
 
 
